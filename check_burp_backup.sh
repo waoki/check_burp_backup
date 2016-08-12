@@ -38,7 +38,7 @@ function usage()
 	echo "Options :"
 	echo "-H Name of backuped host (see clientconfdir)"
 	echo "-w WARNING number of minutes since last save "
-	echo "-w CRITICAL number of minutes since last save"
+	echo "-c CRITICAL number of minutes since last save"
 	echo "-p Enable perfdata"
 }
 
