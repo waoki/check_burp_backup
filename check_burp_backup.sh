@@ -104,6 +104,11 @@ while getopts hH:d:pw:c:W:C: OPT; do
 	esac
 done
 
+if [ $WARNERRS -gt $CRITERRS ];
+then
+	echo "UNKNOWN: Error-count warning level is greater than Critical level"
+	exit $STATE_UNKNOWN
+fi
 
 if [ $WARNING -gt $CRITICAL ]
 then
