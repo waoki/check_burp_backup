@@ -35,10 +35,13 @@ function usage()
 	echo check_burp_backup.sh 1.1
 	echo "This plugin read the backup_stats file (or log.gz for burp < 1.4.x) and check the age and warning of the backup."
 	echo "Usage : -H <hostname> -d <directory> [-p] -w <minutes> -c <minutes>"
+	echo "        [-W <errors>] [-C <errors>]"
 	echo "Options :"
 	echo "-H Name of backuped host (see clientconfdir)"
 	echo "-w WARNING number of minutes since last save "
 	echo "-c CRITICAL number of minutes since last save"
+	echo "-W WARNING number of errors"
+	echo "-C CRITICAL number of errors"
 	echo "-p Enable perfdata"
 }
 
@@ -62,8 +65,12 @@ then
 	exit $STATE_UNKNOWN
 fi
 
+# Defaults for optional arguments
+WARNERRS=0
+CRITERRS=0
+
 # Manage arguments
-while getopts hH:d:pw:c: OPT; do
+while getopts hH:d:pw:c:W:C: OPT; do
 	case $OPT in
 		h)	
 			usage
@@ -80,6 +87,12 @@ while getopts hH:d:pw:c: OPT; do
 			;;
 		c)
 			CRITICAL=$OPTARG
+			;;
+		W)
+			WARNERRS=$OPTARG
+			;;
+		C)
+			CRITERRS=$OPTARG
 			;;
 		p)
 			PERFDATAOPT=1
@@ -143,17 +156,21 @@ fi
 # Clean tempory file
 rm $TMP
 
-if [ $LAST -gt $CRITICAL ] || [ $WARNINGS -gt 0 ]
+if [ $LAST -gt $CRITICAL ] || [ $WARNINGS -gt $CRITERRS ]
 then
 	echo "CRITICAL : Last backup $LASTDIFF ago with $WARNINGS errors $PERFDATA"
 	exit $STATE_CRITICAL
 else
-	if [ $LAST -gt $WARNING ]
+	if [ $LAST -gt $WARNING ] || [ $WARNINGS -gt $WARNERRS ]
 	then
 		echo "WARNING : Last backup $LASTDIFF ago with $WARNINGS errors $PERFDATA"
 	        exit $STATE_WARNING
 	else
-		echo "OK : Backup without error $LASTDIFF ago $PERFDATA"
+		if [ $WARNINGS -eq 0 ]; then 
+			echo "OK : Backup without error $LASTDIFF ago $PERFDATA"
+		else
+			echo "OK : Last backup $LASTDIFF ago with $WARNINGS errors $PERFDATA"
+		fi
 		exit $STATE_OK
 	fi
 fi
