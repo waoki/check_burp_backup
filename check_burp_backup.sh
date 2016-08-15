@@ -104,6 +104,12 @@ while getopts hH:d:pw:c:W:C: OPT; do
 	esac
 done
 
+if [ -z "${WARNING}" ] || [ -z "${CRITICAL}" ] || [ -z "${HOST}" ] || [ -z "${DIR}" ];
+then
+	usage
+	exit $STATE_UNKNOWN
+fi
+
 if [ $WARNERRS -gt $CRITERRS ];
 then
 	echo "UNKNOWN: Error-count warning level is greater than Critical level"
