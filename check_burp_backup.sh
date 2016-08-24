@@ -133,7 +133,7 @@ LOG=$DIR/$HOST/current/log.gz
 # Open laste BURP backup log file
 if [ ! -e $LOG ]
 then
-	echo "CRITICAL : $FILE doesn't exist!"
+	echo "CRITICAL : $LOG doesn't exist!"
 	exit $STATE_CRITICAL
 fi
 
