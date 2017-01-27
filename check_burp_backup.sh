@@ -130,6 +130,12 @@ fi
 
 LOG=$DIR/$HOST/current/log.gz
 
+if [ ! -d "${DIR}" ];
+then
+	echo "UNKNOWN : $DIR doesn't exist!"
+	exit $STATE_UNKNOWN
+fi
+
 # Open laste BURP backup log file
 if [ ! -e $LOG ]
 then
